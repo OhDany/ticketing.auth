@@ -1,7 +1,7 @@
 import expres, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { ValidateRequest, BaddRequestError } from '@odtickets/common';
+import { validateRequest, BadRequestError } from '@odtickets/common';
 
 import { Password } from '../services/password';
 import { User } from '../models/user';
@@ -17,13 +17,13 @@ router.post(
       .notEmpty()
       .withMessage('You must supply a password'),
   ],
-  ValidateRequest,
+  validateRequest,
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      throw new BaddRequestError('Invalid credentials');
+      throw new BadRequestError('Invalid credentials');
     }
 
     const passwordMatch = await Password.compare(
@@ -31,7 +31,7 @@ router.post(
       password
     );
     if (!passwordMatch) {
-      throw new BaddRequestError('Invalid credentials');
+      throw new BadRequestError('Invalid credentials');
     }
 
     // Generate JWT

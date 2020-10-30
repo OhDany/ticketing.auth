@@ -1,7 +1,7 @@
 import expres, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { ValidateRequest, BaddRequestError } from '@odtickets/common';
+import { validateRequest, BadRequestError } from '@odtickets/common';
 
 import { User } from '../models/user';
 
@@ -16,14 +16,14 @@ router.post(
       .isLength({ min: 4, max: 20 })
       .withMessage('Password must be between 4 and 20 characters'),
   ],
-  ValidateRequest,
+  validateRequest,
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      throw new BaddRequestError('Email in Use');
+      throw new BadRequestError('Email in Use');
     }
 
     const user = User.build({ email, password });
